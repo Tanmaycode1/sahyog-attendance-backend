@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendance Records</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1>Attendance Records</h1>
+
+    <!-- Filters Form -->
+    <form method="get" action="{{ url_for('home') }}">
+        <label for="manager_id">Filter by Manager:</label>
+        <select id="manager_id" name="manager_id">
+            <option value="">All Managers</option>
+            {% for manager in managers %}
+                <option value="{{ manager.id }}">{{ manager.fullname }}</option>
+            {% endfor %}
+        </select>
+
+        <label for="date">Filter by Date:</label>
+        <input type="date" id="date" name="date">
+
+        <button type="submit">Apply Filters</button>
+    </form>
+
+    <!-- Attendance Records Table -->
+    <table>
+        <thead>
+            <tr>
+                <th>User Full Name</th>
+                <th>Manager Full Name</th>
+                <th>Date</th>
+                <th>Check-in Time</th>
+                <th>Check-out Time</th>
+                <th>Working Day Type</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for record in records %}
+            <tr>
+                <td>{{ record.user_fullname }}</td>
+                <td>{{ record.manager_fullname }}</td>
+                <td>{{ record.date }}</td>
+                <td>{{ record.checkin_time }}</td>
+                <td>{{ record.checkout_time }}</td>
+                <td>{{ record.working_day_type }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

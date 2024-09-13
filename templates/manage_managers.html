@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Managers</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1>Manage Managers</h1>
+
+    <!-- Form for Adding a New Manager -->
+    <form method="post" action="{{ url_for('manage_managers') }}">
+        <h2>Add Manager</h2>
+        <label for="fullname">Full Name:</label>
+        <input type="text" id="fullname" name="fullname" required>
+        <button type="submit" name="action" value="add">Add Manager</button>
+    </form>
+
+    <!-- Form for Deleting a Manager -->
+    <form method="post" action="{{ url_for('manage_managers') }}">
+        <h2>Delete Manager</h2>
+        <label for="manager_id">Manager ID:</label>
+        <input type="number" id="manager_id" name="manager_id" required>
+        <button type="submit" name="action" value="delete">Delete Manager</button>
+    </form>
+
+    <!-- Display Current Managers -->
+    <h2>Current Managers</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Full Name</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for manager in managers %}
+            <tr>
+                <td>{{ manager.id }}</td>
+                <td>{{ manager.fullname }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
