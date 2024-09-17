@@ -1,62 +1,74 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manage Managers</title>
-    <style>
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        table, th, td {
-            border: 1px solid black;
-        }
-        th, td {
-            padding: 8px;
-            text-align: left;
-        }
-        th {
-            background-color: #f2f2f2;
-        }
-    </style>
-</head>
-<body>
-    <h1>Manage Managers</h1>
+{% extends "base.html" %}
 
-    <!-- Form for Adding a New Manager -->
-    <form method="post" action="{{ url_for('manage_managers') }}">
-        <h2>Add Manager</h2>
-        <label for="fullname">Full Name:</label>
-        <input type="text" id="fullname" name="fullname" required>
-        <button type="submit" name="action" value="add">Add Manager</button>
-    </form>
+{% block title %}Manage Managers{% endblock %}
 
-    <!-- Form for Deleting a Manager -->
-    <form method="post" action="{{ url_for('manage_managers') }}">
-        <h2>Delete Manager</h2>
-        <label for="manager_id">Manager ID:</label>
-        <input type="number" id="manager_id" name="manager_id" required>
-        <button type="submit" name="action" value="delete">Delete Manager</button>
-    </form>
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold mb-8">Manage Managers</h1>
+
+    <div class="grid md:grid-cols-2 gap-8">
+        <!-- Form for Adding a New Manager -->
+        <div class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+            <h2 class="text-xl font-semibold mb-4">Add Manager</h2>
+            <form method="post" action="{{ url_for('manage_managers') }}">
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="fullname">
+                        Full Name:
+                    </label>
+                    <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" type="text" id="fullname" name="fullname" required>
+                </div>
+                <div class="flex items-center justify-between">
+                    <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit" name="action" value="add">
+                        Add Manager
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Form for Deleting a Manager -->
+        <div class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+            <h2 class="text-xl font-semibold mb-4">Delete Manager</h2>
+            <form method="post" action="{{ url_for('manage_managers') }}">
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="manager_id">
+                        Manager ID:
+                    </label>
+                    <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" type="number" id="manager_id" name="manager_id" required>
+                </div>
+                <div class="flex items-center justify-between">
+                    <button class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit" name="action" value="delete">
+                        Delete Manager
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
 
     <!-- Display Current Managers -->
-    <h2>Current Managers</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Full Name</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for manager in managers %}
-            <tr>
-                <td>{{ manager.id }}</td>
-                <td>{{ manager.fullname }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</body>
-</html>
+    <div class="mt-8">
+        <h2 class="text-xl font-semibold mb-4">Current Managers</h2>
+        <div class="overflow-x-auto">
+            <table class="min-w-full bg-white">
+                <thead class="bg-gray-100">
+                    <tr>
+                        <th class="py-2 px-4 border-b text-left">ID</th>
+                        <th class="py-2 px-4 border-b text-left">Full Name</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for manager in managers %}
+                    <tr class="hover:bg-gray-50">
+                        <td class="py-2 px-4 border-b">{{ manager.id }}</td>
+                        <td class="py-2 px-4 border-b">{{ manager.fullname }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+{% endblock %}

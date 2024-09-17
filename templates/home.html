@@ -1,69 +1,103 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Attendance Records</title>
-    <style>
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        table, th, td {
-            border: 1px solid black;
-        }
-        th, td {
-            padding: 8px;
-            text-align: left;
-        }
-        th {
-            background-color: #f2f2f2;
-        }
-    </style>
-</head>
-<body>
-    <h1>Attendance Records</h1>
+{% extends "base.html" %}
+
+{% block title %}Attendance Records{% endblock %}
+{% block content %}
+    <h1 class="text-3xl font-bold mb-6">Attendance Records</h1>
 
     <!-- Filters Form -->
-    <form method="get" action="{{ url_for('home') }}">
-        <label for="manager_id">Filter by Manager:</label>
-        <select id="manager_id" name="manager_id">
-            <option value="">All Managers</option>
-            {% for manager in managers %}
-                <option value="{{ manager.id }}">{{ manager.fullname }}</option>
-            {% endfor %}
-        </select>
+    <form method="get" action="{{ url_for('home') }}" class="mb-8 bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+        <div class="mb-4">
+            <label class="block text-gray-700 text-sm font-bold mb-2" for="manager_id">
+                Filter by Manager:
+            </label>
+            <select id="manager_id" name="manager_id" class="shadow border rounded w-full py-2 px-3 text-gray-700">
+                <option value="">All Managers</option>
+                {% for manager in managers %}
+                    <option value="{{ manager.id }}">{{ manager.fullname }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="mb-4">
+            <label class="block text-gray-700 text-sm font-bold mb-2" for="date">
+                Filter by Date:
+            </label>
+            <input type="date" id="date" name="date" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+        </div>
+        <div class="flex items-center justify-between">
+            <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">
+                Apply Filters
+            </button>
 
-        <label for="date">Filter by Date:</label>
-        <input type="date" id="date" name="date">
-
-        <button type="submit">Apply Filters</button>
+            <a href="/">
+                <div class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                    Remove Filters
+                </div>
+            </a>
+        </div>
     </form>
 
+    <!-- Download CSV Button -->
+   <form method="get" action="{{ url_for('home') }}">
+    <input type="hidden" name="manager_id" value="{{ request.args.get('manager_id', '') }}">
+    <input type="hidden" name="date" value="{{ request.args.get('date', '') }}">
+    <button type="submit" name="download_csv" value="true" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+        Download CSV
+    </button>
+</form>
+
+
     <!-- Attendance Records Table -->
-    <table>
-        <thead>
-            <tr>
-                <th>User Full Name</th>
-                <th>Manager Full Name</th>
-                <th>Date</th>
-                <th>Check-in Time</th>
-                <th>Check-out Time</th>
-                <th>Working Day Type</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for record in records %}
-            <tr>
-                <td>{{ record.user_fullname }}</td>
-                <td>{{ record.manager_fullname }}</td>
-                <td>{{ record.date }}</td>
-                <td>{{ record.checkin_time }}</td>
-                <td>{{ record.checkout_time }}</td>
-                <td>{{ record.working_day_type }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</body>
-</html>
+    <div class="overflow-x-auto mt-4">
+        <table class="table-auto w-full bg-white shadow-md rounded">
+            <thead>
+                <tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
+                    <th class="py-3 px-6 text-left">User Id</th>
+                    <th class="py-3 px-6 text-left">User Full Name</th>
+                    <th class="py-3 px-6 text-left">Manager Full Name</th>
+                    <th class="py-3 px-6 text-left">Date</th>
+                    <th class="py-3 px-6 text-left">Check-in Time</th>
+                    <th class="py-3 px-6 text-left">Check-out Time</th>
+                    <th class="py-3 px-6 text-left">Working Day Type</th>
+                    <th class="py-3 px-6 text-left">Edit</th>
+                </tr>
+            </thead>
+            <tbody class="text-gray-600 text-sm font-light">
+                {% for record in records %}
+                <tr class="border-b border-gray-200 hover:bg-gray-100">
+                    <td class="py-3 px-6 text-left whitespace-nowrap">{{ record.user_id }}</td>
+                    <td class="py-3 px-6 text-left whitespace-nowrap">{{ record.user_fullname }}</td>
+                    <td class="py-3 px-6 text-left whitespace-nowrap">{{ record.manager_fullname }}</td>
+                    <td class="py-3 px-6 text-left whitespace-nowrap">{{ record.date }}</td>
+                    <td class="py-3 px-6 text-left whitespace-nowrap">{{ record.checkin_time }}</td>
+                    <td class="py-3 px-6 text-left whitespace-nowrap">{{ record.checkout_time }}</td>
+                    <td class="py-3 px-6 text-left whitespace-nowrap">{{ record.working_day_type }}</td>
+                    <td class="py-3 px-6 text-left">
+                        <form method="post" action="{{ url_for('home') }}" class="flex flex-col space-y-2">
+                            <input type="hidden" name="attendance_id" value="{{ record.id }}">
+                            <div class="flex items-center space-x-2">
+                                <label class="text-sm">Check-in:</label>
+                                <input type="time" name="checkin_time" value="{{ record.checkin_time }}" class="border rounded px-2 py-1">
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <label class="text-sm">Check-out:</label>
+                                <input type="time" name="checkout_time" value="{{ record.checkout_time }}" class="border rounded px-2 py-1">
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <label class="text-sm">Type:</label>
+                                <select name="working_day_type" class="border rounded px-2 py-1">
+                                    <option value="Full Day" {% if record.working_day_type == 'Full Day' %}selected{% endif %}>Full Day</option>
+                                    <option value="Half Day" {% if record.working_day_type == 'Half Day' %}selected{% endif %}>Half Day</option>
+                                    <option value="Short Leave" {% if record.working_day_type == 'Short Leave' %}selected{% endif %}>Short Leave</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                                Update
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
